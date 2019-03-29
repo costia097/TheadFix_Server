@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.net.Socket;
-import java.util.Random;
 
 public class ServerPlayer {
     private String name;
     private float x;
     private float y;
     private float z;
+    private float rotationX;
+    private float rotationY;
+    private float rotationZ;
     @JsonIgnore
     private BufferedReader bufferedReader;
     @JsonIgnore
@@ -49,6 +51,30 @@ public class ServerPlayer {
 
     public void setZ(float z) {
         this.z = z;
+    }
+
+    public float getRotationX() {
+        return rotationX;
+    }
+
+    public void setRotationX(float rotationX) {
+        this.rotationX = rotationX;
+    }
+
+    public float getRotationY() {
+        return rotationY;
+    }
+
+    public void setRotationY(float rotationY) {
+        this.rotationY = rotationY;
+    }
+
+    public float getRotationZ() {
+        return rotationZ;
+    }
+
+    public void setRotationZ(float rotationZ) {
+        this.rotationZ = rotationZ;
     }
 
     public BufferedReader getBufferedReader() {

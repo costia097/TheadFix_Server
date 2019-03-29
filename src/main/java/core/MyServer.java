@@ -53,16 +53,10 @@ public class MyServer {
 
                         switch (inputMessageWrapper.getMessageType()) {
                             case PLAYER_JOIN:
-                                System.out.println("RETRIEVE PLAYER_JOIN message" + msg);
-
                                 ClientJoinMessage clientJoinMessage = objectMapper.readValue(inputMessageWrapper.getPayload(), ClientJoinMessage.class);
                                 ServerPlayer serverPlayer = new ServerPlayer();
 
                                 serverPlayer.setName(clientJoinMessage.getPlayerId());
-
-                                serverPlayer.setX(0);
-                                serverPlayer.setY(0);
-                                serverPlayer.setZ(0);
 
                                 serverPlayer.setSocket(accept);
                                 serverPlayer.setBufferedReader(bufferedReader);
@@ -84,8 +78,6 @@ public class MyServer {
 
                                 break;
                             case PLAYER_MOVE:
-                                System.out.println("RETRIEVE PLAYER_MOVE message" + msg);
-
                                 PlayerMoveMessage playerMoveMessage = objectMapper.readValue(inputMessageWrapper.getPayload(), PlayerMoveMessage.class);
 
                                 String playerId = playerMoveMessage.getPlayerId();
@@ -94,6 +86,9 @@ public class MyServer {
                                     if (player.getName().equals(playerId)) {
                                         player.setX(playerMoveMessage.getX());
                                         player.setY(playerMoveMessage.getY());
+                                        player.setZ(playerMoveMessage.getZ());
+
+                                        player.setRotationZ(playerMoveMessage.getRotationZ());
                                     }
                                 }
 
