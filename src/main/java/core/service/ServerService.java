@@ -1,6 +1,7 @@
 package core.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import core.message.PlayerWaveMessage;
 import core.processor.MessageProcessor;
 import core.message.MessageWrapper;
 import core.message.PlayerJoinMessage;
@@ -27,7 +28,7 @@ public class ServerService {
     private MessageProcessor messageProcessor;
 
     @Autowired
-    private NetworkPlayersService networkPlayersService;
+    private NetworkService networkService;
 
     public void startServer() throws IOException {
         ServerSocket serverSocket = new ServerSocket(27015);
@@ -71,11 +72,16 @@ public class ServerService {
                             PlayerStateMessage playerStateMessage = objectMapper.readValue(inputMessageWrapper.getPayload(), PlayerStateMessage.class);
                             messageProcessor.processPlayerStateMessage(playerStateMessage);
                             break;
+                        case PlayerWave:
+
+                            PlayerWaveMessage playerWaveMessage = objectMapper.readValue(inputMessageWrapper.getPayload(), PlayerWaveMessage.class);
+                            messageProcessor.processPlayerWaveMessage(playerWaveMessage);
+                            break;
                         default:
                             throw new RuntimeException();
                     }
 
-                    networkPlayersService.sendMessageForPlayersExceptGiven(playerConnectedSocket, inputMessage);
+                    networkService.sendMessageForPlayersExceptGiven(playerConnectedSocket, inputMessage);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

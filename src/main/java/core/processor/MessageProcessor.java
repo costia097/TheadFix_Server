@@ -1,13 +1,15 @@
 package core.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import core.ServerPlayer;
+import core.entities.ServerPlayer;
 import core.annotation.Processor;
 import core.message.MessageType;
 import core.message.MessageWrapper;
 import core.message.PlayerJoinMessage;
 import core.message.PlayerStateMessage;
-import core.service.NetworkPlayersService;
+import core.message.PlayerWaveMessage;
+import core.service.EnemyService;
+import core.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
@@ -18,7 +20,10 @@ import java.net.Socket;
 @Processor
 public class MessageProcessor {
     @Autowired
-    private NetworkPlayersService networkPlayersService;
+    private PlayerService playerService;
+
+    @Autowired
+    private EnemyService enemyService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -38,26 +43,42 @@ public class MessageProcessor {
         serverPlayer.setBufferedReader(playerBufferedReader);
         serverPlayer.setBufferedWriter(playerBufferedWriter);
 
-        sendFirstSyncMessageToPlayer(playerBufferedWriter);
+        sendFirstPlayerSyncMessageToPlayer(playerBufferedWriter);
+        sendFirstEnemySyncMessageToPlayer(playerBufferedWriter);
 
-        networkPlayersService.addPlayer(serverPlayer);
+        playerService.addPlayer(serverPlayer);
     }
 
     public void processPlayerStateMessage(PlayerStateMessage playerStateMessage) {
         String playerId = playerStateMessage.getPlayerId();
 
-        networkPlayersService.getPlayers().stream()
+        playerService.getPlayers().stream()
                 .filter(serverPlayer -> serverPlayer.getName().equals(playerId))
                 .findFirst()
-                .ifPresent(serverPlayer -> initServerPlayer(serverPlayer, playerStateMessage));
+                .ifPresent(serverPlayer -> injectNewInformationAboutServerPlayer(serverPlayer, playerStateMessage));
     }
 
-    private void sendFirstSyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {
-        String playersMessageJson = objectMapper.writeValueAsString(networkPlayersService.getPlayers());
 
+    //TODO
+    public void processPlayerWaveMessage(PlayerWaveMessage playerWaveMessage) {
+
+    }
+
+    private void sendFirstPlayerSyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {
+        String playersMessageJson = objectMapper.writeValueAsString(playerService.getPlayers());
+        sendMessageToPlayerWith(MessageType.FirstPlayersSync, playersMessageJson, playerBufferedWriter);
+    }
+
+    private void sendFirstEnemySyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {
+        String enemiesMessageJson = objectMapper.writeValueAsString(enemyService.getEnemies());
+        sendMessageToPlayerWith(MessageType.FirstEnemiesSync, enemiesMessageJson, playerBufferedWriter);
+    }
+
+    private void sendMessageToPlayerWith(MessageType messageType, String payloadValueString, BufferedWriter playerBufferedWriter) throws IOException {
         MessageWrapper messageWrapper = new MessageWrapper();
-        messageWrapper.setMessageType(MessageType.FirstSync);
-        messageWrapper.setPayload(playersMessageJson);
+        messageWrapper.setMessageType(messageType);
+
+        messageWrapper.setPayload(payloadValueString);
 
         String messageWrapperJson = objectMapper.writeValueAsString(messageWrapper);
 
@@ -66,7 +87,7 @@ public class MessageProcessor {
         playerBufferedWriter.flush();
     }
 
-    private void initServerPlayer(ServerPlayer player, PlayerStateMessage playerStateMessage) {
+    private void injectNewInformationAboutServerPlayer(ServerPlayer player, PlayerStateMessage playerStateMessage) {
         player.setX(playerStateMessage.getX());
         player.setY(playerStateMessage.getY());
         player.setZ(playerStateMessage.getZ());

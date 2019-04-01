@@ -1,4 +1,4 @@
-package core;
+package core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.net.Socket;
 
-@SuppressWarnings("unused")
 public class ServerPlayer {
 
     @JsonProperty("Name")
@@ -115,5 +114,15 @@ public class ServerPlayer {
 
     public void setSocket(Socket socket) {
         this.socket = socket;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerPlayer{" +
+                "name='" + name + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", rotationZ=" + rotationZ +
+                '}';
     }
 }

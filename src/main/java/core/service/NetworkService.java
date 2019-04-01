@@ -1,28 +1,23 @@
 package core.service;
 
-import core.ServerPlayer;
+import core.entities.ServerPlayer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
-public class NetworkPlayersService {
+public class NetworkService {
+    @Autowired
+    private PlayerService playerService;
 
-    private static List<ServerPlayer> players = new ArrayList<>();
-
-    public void addPlayer(ServerPlayer serverPlayer) {
-        players.add(serverPlayer);
-    }
-
-    public List<ServerPlayer> getPlayers() {
-        return players;
+    public void sendMessageTo(ServerPlayer playerToSend, String message) {
+        doProcessOfSend(playerToSend, message);
     }
 
     void sendMessageForPlayersExceptGiven(Socket exceptPlayerSocket, String messageToSend) {
-        players.stream()
+        playerService.getPlayers().stream()
                 .filter(serverPlayer -> !serverPlayer.getSocket().equals(exceptPlayerSocket))
                 .forEach(serverPlayer -> doProcessOfSend(serverPlayer, messageToSend));
     }
