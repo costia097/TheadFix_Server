@@ -1,6 +1,9 @@
 package core.message;
 
-public class ClientJoinMessage {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class PlayerJoinMessage {
+    @JsonProperty("PlayerId")
     private String playerId;
 
     public String getPlayerId() {

@@ -1,11 +1,16 @@
 package core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MessageWrapper {
 
+    @JsonProperty("MessageId")
     private long messageId;
 
+    @JsonProperty("MessageType")
     private MessageType messageType;
 
+    @JsonProperty("Payload")
     private String payload;
 
     public long getMessageId() {

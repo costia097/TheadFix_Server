@@ -1,23 +1,39 @@
 package core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.net.Socket;
 
+@SuppressWarnings("unused")
 public class ServerPlayer {
+
+    @JsonProperty("Name")
     private String name;
+
+    @JsonProperty("X")
     private float x;
+
+    @JsonProperty("Y")
     private float y;
+
+    @JsonProperty("Z")
     private float z;
+
     private float rotationX;
+
     private float rotationY;
+
     private float rotationZ;
+
     @JsonIgnore
     private BufferedReader bufferedReader;
+
     @JsonIgnore
     private BufferedWriter bufferedWriter;
+
     @JsonIgnore
     private Socket socket;
 

@@ -1,19 +1,28 @@
 package core.message;
 
-public class PlayerMoveMessage {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class PlayerStateMessage {
+
+    @JsonProperty("PlayerId")
     private String playerId;
 
+    @JsonProperty("X")
     private float x;
 
+    @JsonProperty("Y")
     private float y;
 
+    @JsonProperty("Z")
     private float z;
 
+    @JsonProperty("RotationX")
     private float rotationX;
 
+    @JsonProperty("RotationY")
     private float rotationY;
 
+    @JsonProperty("RotationZ")
     private float rotationZ;
 
     public String getPlayerId() {
