@@ -12,6 +12,15 @@ public class ServerPlayer {
     @JsonProperty("Name")
     private String name;
 
+    @JsonProperty("IsWatchToRightDirection")
+    private boolean isWatchToRightDirection;
+
+    @JsonProperty("IsRunning")
+    private boolean isRunning;
+
+    @JsonProperty("IsSlashing")
+    private boolean isSlashing;
+
     @JsonProperty("X")
     private float x;
 
@@ -42,6 +51,30 @@ public class ServerPlayer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isWatchToRightDirection() {
+        return isWatchToRightDirection;
+    }
+
+    public void setWatchToRightDirection(boolean watchToRightDirection) {
+        isWatchToRightDirection = watchToRightDirection;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    public boolean isSlashing() {
+        return isSlashing;
+    }
+
+    public void setSlashing(boolean slashing) {
+        isSlashing = slashing;
     }
 
     public float getX() {

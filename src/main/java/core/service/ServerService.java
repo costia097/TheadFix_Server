@@ -76,7 +76,11 @@ public class ServerService {
 
                             PlayerWaveMessage playerWaveMessage = objectMapper.readValue(inputMessageWrapper.getPayload(), PlayerWaveMessage.class);
                             messageProcessor.processPlayerWaveMessage(playerWaveMessage);
-                            break;
+
+                            /*
+                            we dont need to send this message for all player
+                             */
+                            continue;
                         default:
                             throw new RuntimeException();
                     }

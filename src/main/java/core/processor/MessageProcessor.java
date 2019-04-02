@@ -1,8 +1,10 @@
 package core.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import core.checker.HitterChecker;
 import core.entities.ServerPlayer;
 import core.annotation.Processor;
+import core.event.PlayerWavePlayerActionEvent;
 import core.message.MessageType;
 import core.message.MessageWrapper;
 import core.message.PlayerJoinMessage;
@@ -24,6 +26,9 @@ public class MessageProcessor {
 
     @Autowired
     private EnemyService enemyService;
+
+    @Autowired
+    private HitterChecker hitterChecker;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -58,10 +63,13 @@ public class MessageProcessor {
                 .ifPresent(serverPlayer -> injectNewInformationAboutServerPlayer(serverPlayer, playerStateMessage));
     }
 
-
-    //TODO
     public void processPlayerWaveMessage(PlayerWaveMessage playerWaveMessage) {
+        PlayerWavePlayerActionEvent playerWavePlayerActionEvent = new PlayerWavePlayerActionEvent();
 
+        playerWavePlayerActionEvent.setDirection(playerWaveMessage.getDirection());
+        playerWavePlayerActionEvent.setPlayerName(playerWaveMessage.getPlayerName());
+
+        hitterChecker.addEventToProcess(playerWavePlayerActionEvent);
     }
 
     private void sendFirstPlayerSyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {
@@ -91,6 +99,11 @@ public class MessageProcessor {
         player.setX(playerStateMessage.getX());
         player.setY(playerStateMessage.getY());
         player.setZ(playerStateMessage.getZ());
+
+        player.setWatchToRightDirection(playerStateMessage.isWatchToRightDirection());
+
+        player.setRunning(playerStateMessage.isRunning());
+        player.setSlashing(playerStateMessage.isSlashing());
 
         player.setRotationZ(playerStateMessage.getRotationZ());
     }

@@ -1,5 +1,6 @@
 package core;
 
+import core.checker.HitterChecker;
 import core.config.ServerConfig;
 import core.controller.EnemyController;
 import core.entities.enemy.Enemy;
@@ -23,6 +24,7 @@ public class ThreadFixServer {
         EnemyTickBeater enemyTickBeater = (EnemyTickBeater) annotationConfigApplicationContext.getBean("enemyTickBeater");
         EnemyService enemyService = (EnemyService) annotationConfigApplicationContext.getBean("enemyService");
         EnemyController enemyController = (EnemyController) annotationConfigApplicationContext.getBean("enemyController");
+        HitterChecker hitterChecker = (HitterChecker) annotationConfigApplicationContext.getBean("hitterChecker");
 
         Enemy enemy = new Enemy();
         enemy.setName("Enemy");
@@ -35,6 +37,8 @@ public class ThreadFixServer {
         enemyTickBeater.startEnemyTick();
 
         enemyController.startRightLeftFlow();
+
+        hitterChecker.startCheckHits();
 
         severService.startServer();
     }

@@ -25,4 +25,12 @@ public class PlayerWaveMessage {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerWaveMessage{" +
+                "playerName='" + playerName + '\'' +
+                ", direction=" + direction +
+                '}';
+    }
 }

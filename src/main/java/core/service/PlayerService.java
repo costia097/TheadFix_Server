@@ -15,6 +15,14 @@ public class PlayerService {
         players.add(serverPlayer);
     }
 
+    public ServerPlayer getByName(String playerName) {
+        //TODO in optional
+        return players.stream()
+                .filter(serverPlayer -> serverPlayer.getName().equals(playerName))
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<ServerPlayer> getPlayers() {
         return players;
     }
