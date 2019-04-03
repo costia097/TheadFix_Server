@@ -11,6 +11,7 @@ import core.message.PlayerJoinMessage;
 import core.message.PlayerStateMessage;
 import core.message.PlayerWaveMessage;
 import core.service.EnemyService;
+import core.service.MapService;
 import core.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +30,9 @@ public class MessageProcessor {
 
     @Autowired
     private HitterChecker hitterChecker;
+
+    @Autowired
+    private MapService mapService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -50,6 +54,7 @@ public class MessageProcessor {
 
         sendFirstPlayerSyncMessageToPlayer(playerBufferedWriter);
         sendFirstEnemySyncMessageToPlayer(playerBufferedWriter);
+        sendFirstMapSyncMessageToPlayer(playerBufferedWriter);
 
         playerService.addPlayer(serverPlayer);
     }
@@ -80,6 +85,11 @@ public class MessageProcessor {
     private void sendFirstEnemySyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {
         String enemiesMessageJson = objectMapper.writeValueAsString(enemyService.getEnemies());
         sendMessageToPlayerWith(MessageType.FirstEnemiesSync, enemiesMessageJson, playerBufferedWriter);
+    }
+
+    private void sendFirstMapSyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {
+        String mapMessageJson = objectMapper.writeValueAsString(mapService.getMap());
+        sendMessageToPlayerWith(MessageType.FirstMapSync, mapMessageJson, playerBufferedWriter);
     }
 
     private void sendMessageToPlayerWith(MessageType messageType, String payloadValueString, BufferedWriter playerBufferedWriter) throws IOException {

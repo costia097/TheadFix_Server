@@ -82,9 +82,8 @@ public class HitterChecker {
             startPosition = targetServerPlayer.getX();
             endPosition = startPosition + 2;
         } else {
-            //TODO not working need to fix
-            startPosition = targetServerPlayer.getX();
-            endPosition = startPosition - 2;
+            startPosition = targetServerPlayer.getX() - 2;
+            endPosition = targetServerPlayer.getX();
         }
 
         return enemyService.findWithPositionInGivenRange(startPosition, endPosition);
@@ -119,6 +118,7 @@ public class HitterChecker {
             e.printStackTrace();
         }
 
+        //TODO
         return null;
     }
 }

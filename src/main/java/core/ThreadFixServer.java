@@ -5,6 +5,7 @@ import core.config.ServerConfig;
 import core.controller.EnemyController;
 import core.entities.enemy.Enemy;
 import core.service.EnemyService;
+import core.service.MapService;
 import core.service.ServerService;
 import core.tickBeat.EnemyTickBeater;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -25,6 +26,7 @@ public class ThreadFixServer {
         EnemyService enemyService = (EnemyService) annotationConfigApplicationContext.getBean("enemyService");
         EnemyController enemyController = (EnemyController) annotationConfigApplicationContext.getBean("enemyController");
         HitterChecker hitterChecker = (HitterChecker) annotationConfigApplicationContext.getBean("hitterChecker");
+        MapService mapService = (MapService) annotationConfigApplicationContext.getBean("mapService");
 
         Enemy enemy = new Enemy();
         enemy.setName("Enemy");
@@ -39,6 +41,8 @@ public class ThreadFixServer {
         enemyController.startRightLeftFlow();
 
         hitterChecker.startCheckHits();
+
+        mapService.generateMap();
 
         severService.startServer();
     }

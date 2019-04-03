@@ -1,12 +1,9 @@
 package core.tickBeat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import core.annotation.TickBeater;
 import core.entities.enemy.Enemy;
 import core.message.EnemyStateMessage;
 import core.message.MessageType;
-import core.message.MessageWrapper;
 import core.service.EnemyService;
 import core.service.NetworkService;
 import core.service.PlayerService;
@@ -16,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @TickBeater
-public class EnemyTickBeater {
+public class EnemyTickBeater extends AbstractTickBeater{
     @Autowired
     private EnemyService enemyService;
 
@@ -25,9 +22,6 @@ public class EnemyTickBeater {
 
     @Autowired
     private PlayerService playerService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private boolean isEnemyTickBeaterWorking = true;
 
@@ -38,7 +32,7 @@ public class EnemyTickBeater {
                 List<String> enemyStatePayloads = enemyService.getEnemies().stream()
                         .map(this::createEnemyStateMessages)
                         .map(this::generateJsonStringPayload)
-                        .map(this::generateMessageWrapper)
+                        .map(s -> generateMessageWrapper(s, MessageType.EnemyState))
                         .map(this::generateJsonStringPayload)
                         .collect(Collectors.toList());
 
@@ -63,24 +57,6 @@ public class EnemyTickBeater {
         enemyStateMessage.setY(enemy.getY());
 
         return enemyStateMessage;
-    }
-
-    private MessageWrapper generateMessageWrapper(String payload) {
-        MessageWrapper messageWrapper = new MessageWrapper();
-
-        messageWrapper.setPayload(payload);
-        messageWrapper.setMessageType(MessageType.EnemyState);
-
-        return messageWrapper;
-    }
-
-    private String generateJsonStringPayload(Object o) {
-        try {
-            return objectMapper.writeValueAsString(o);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     public boolean isEnemyTickBeaterWorking() {

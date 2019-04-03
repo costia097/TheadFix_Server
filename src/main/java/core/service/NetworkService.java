@@ -17,10 +17,7 @@ public class NetworkService {
     }
 
     public void sendMessageForAllPlayers(String messageToSend) {
-        playerService.getPlayers().forEach(serverPlayer -> {
-            System.out.println("SEND for " + serverPlayer.getName() + "Message: " + messageToSend);
-            doProcessOfSend(serverPlayer, messageToSend);
-        });
+        playerService.getPlayers().forEach(serverPlayer -> doProcessOfSend(serverPlayer, messageToSend));
     }
 
     public void sendMessageForPlayersExceptGiven(Socket exceptPlayerSocket, String messageToSend) {
