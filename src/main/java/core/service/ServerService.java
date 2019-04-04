@@ -84,8 +84,10 @@ public class ServerService {
 
                         case MapChanged:
 
-                            //TODO
-
+                            /*
+                            we dont need to send this message for all player
+                             */
+                            continue;
                         default:
                             throw new RuntimeException();
                     }
