@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerService {
@@ -15,12 +16,10 @@ public class PlayerService {
         players.add(serverPlayer);
     }
 
-    public ServerPlayer getByName(String playerName) {
-        //TODO in optional
+    public Optional<ServerPlayer> findByName(String playerName) {
         return players.stream()
                 .filter(serverPlayer -> serverPlayer.getName().equals(playerName))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     public List<ServerPlayer> getPlayers() {

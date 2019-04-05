@@ -9,5 +9,7 @@ public enum MessageType {
     PlayerWave,
     EnemyHitted,
     FirstMapSync,
-    MapChanged
+    MapChanged,
+    PlayerThrowBomb,
+    BombExploded
 }

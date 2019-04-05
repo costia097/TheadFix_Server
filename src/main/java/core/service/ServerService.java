@@ -1,6 +1,7 @@
 package core.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import core.message.PlayerThrowBombMessage;
 import core.message.PlayerWaveMessage;
 import core.processor.MessageProcessor;
 import core.message.MessageWrapper;
@@ -88,6 +89,11 @@ public class ServerService {
                             we dont need to send this message for all player
                              */
                             continue;
+                        case PlayerThrowBomb:
+
+                            PlayerThrowBombMessage playerThrowBombMessage = objectMapper.readValue(inputMessageWrapper.getPayload(), PlayerThrowBombMessage.class);
+                            messageProcessor.processPlayerThrowBombMessageAsync(playerThrowBombMessage);
+                            break;
                         default:
                             throw new RuntimeException();
                     }

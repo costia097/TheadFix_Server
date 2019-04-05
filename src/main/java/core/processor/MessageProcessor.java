@@ -1,17 +1,19 @@
 package core.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import core.checker.HitterChecker;
+import core.service.EnemyDamagedService;
 import core.entities.ServerPlayer;
 import core.annotation.Processor;
-import core.event.PlayerWavePlayerActionEvent;
 import core.message.MessageType;
 import core.message.MessageWrapper;
 import core.message.PlayerJoinMessage;
 import core.message.PlayerStateMessage;
+import core.message.PlayerThrowBombMessage;
 import core.message.PlayerWaveMessage;
 import core.service.EnemyService;
 import core.service.MapService;
+import core.service.MessageService;
+import core.service.NetworkService;
 import core.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Objects;
 
 @Processor
 public class MessageProcessor {
@@ -29,10 +32,16 @@ public class MessageProcessor {
     private EnemyService enemyService;
 
     @Autowired
-    private HitterChecker hitterChecker;
+    private EnemyDamagedService enemyDamagedService;
 
     @Autowired
     private MapService mapService;
+
+    @Autowired
+    private NetworkService networkService;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -69,12 +78,29 @@ public class MessageProcessor {
     }
 
     public void processPlayerWaveMessage(PlayerWaveMessage playerWaveMessage) {
-        PlayerWavePlayerActionEvent playerWavePlayerActionEvent = new PlayerWavePlayerActionEvent();
+        playerService.findByName(playerWaveMessage.getPlayerName())
+                .map(serverPlayer -> enemyDamagedService.findAppropriativeEnemiesForSword(serverPlayer, playerWaveMessage.getDirection()))
+                .ifPresent(enemies -> enemies.stream().map(messageService::createEnemyHittedMessageWrapper)
+                        .map(messageService::generatePayload)
+                        .filter(Objects::nonNull)
+                        .forEach(message -> networkService.sendMessageForAllPlayers(message))
+                );
+    }
 
-        playerWavePlayerActionEvent.setDirection(playerWaveMessage.getDirection());
-        playerWavePlayerActionEvent.setPlayerName(playerWaveMessage.getPlayerName());
-
-        hitterChecker.addEventToProcess(playerWavePlayerActionEvent);
+    public void processPlayerThrowBombMessageAsync(PlayerThrowBombMessage playerThrowBombMessage) {
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            playerService.findByName(playerThrowBombMessage.getPlayerName())
+                    .map(serverPlayer -> enemyDamagedService.findAppropriativeEnemiesForBomb(serverPlayer, playerThrowBombMessage.getDirection()))
+                    .map(enemies -> messageService.createBombExplosionMessageWrapper(enemies, playerThrowBombMessage.getBombName()))
+                    .map(messageService::generatePayload)
+                    .ifPresent(message -> networkService.sendMessageForAllPlayers(message));
+        });
+        thread.start();
     }
 
     private void sendFirstPlayerSyncMessageToPlayer(BufferedWriter playerBufferedWriter) throws IOException {

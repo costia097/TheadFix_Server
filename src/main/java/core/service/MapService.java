@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.message.GroundBoxElementDestructMessage;
 import core.message.MessageType;
 import core.message.MessageWrapper;
+import core.utils.Vector2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +62,12 @@ public class MapService {
             lastYValue += 0.54f;
         }
 
-        test();
+    }
+
+    public List<GroundBoxElement> findElementsInGivenRadius(Vector2 startPoint, float radius) {
+
+
+        return null;
     }
 
     private void test() {
